@@ -1,0 +1,7 @@
+C:\Users\Zac\source\repos\dotNetAssignment1Attempt\dotNetAssignment1Attempt\obj\Debug\dotNetAssignment1Attempt.csproj.AssemblyReference.cache
+C:\Users\Zac\source\repos\dotNetAssignment1Attempt\dotNetAssignment1Attempt\obj\Debug\dotNetAssignment1Attempt.csproj.CoreCompileInputs.cache
+C:\Users\Zac\source\repos\dotNetAssignment1Attempt\dotNetAssignment1Attempt\bin\Debug\dotNetAssignment1Attempt.exe.config
+C:\Users\Zac\source\repos\dotNetAssignment1Attempt\dotNetAssignment1Attempt\bin\Debug\dotNetAssignment1Attempt.exe
+C:\Users\Zac\source\repos\dotNetAssignment1Attempt\dotNetAssignment1Attempt\bin\Debug\dotNetAssignment1Attempt.pdb
+C:\Users\Zac\source\repos\dotNetAssignment1Attempt\dotNetAssignment1Attempt\obj\Debug\dotNetAssignment1Attempt.exe
+C:\Users\Zac\source\repos\dotNetAssignment1Attempt\dotNetAssignment1Attempt\obj\Debug\dotNetAssignment1Attempt.pdb
