@@ -85,10 +85,7 @@ namespace dotNetAssignment1Attempt
                 {
                     //Login page
                     Console.Clear();
-                    Console.WriteLine("\t\t╔════════════════════════════════════════╗");
-                    Console.WriteLine("\t\t║    WELCOME TO SIMPLE BANKING SYSTEM    ║");
-                    Console.WriteLine("\t\t╠════════════════════════════════════════╣");
-                    Console.WriteLine("\t\t│\t       Login to start            │");
+                    DisplayPageHeaderSubtitle("WELCOME TO SIMPLE BANKING SYSTEM", "Login to Start");
                     Console.WriteLine("\t\t│\t\t\t\t\t │");
                     Console.Write("\t\t│    User Name: ");
 
@@ -132,10 +129,8 @@ namespace dotNetAssignment1Attempt
             {
                 string mainUserInput;
                 Console.Clear();
-                Console.WriteLine("\t\t╔════════════════════════════════════════╗");
-                Console.WriteLine("\t\t║    WELCOME TO SIMPLE BANKING SYSTEM    ║");
-                Console.WriteLine("\t\t╠════════════════════════════════════════╣");
-                Console.WriteLine("\t\t│\t         Main Menu               │");
+                DisplayPageHeaderSubtitle("WELCOME TO SIMPLE BANKING SYSTEM", "Main Menu");
+
                 Console.WriteLine("\t\t│\t\t\t\t\t │");
                 Console.WriteLine("\t\t│    1. Create a new account\t\t │");
                 Console.WriteLine("\t\t│    2. Search for an account\t\t │");
@@ -172,10 +167,7 @@ namespace dotNetAssignment1Attempt
                     string firstName, lastName, address, email;
                     decimal balance;
                     Console.Clear();
-                    Console.WriteLine("\t\t╔════════════════════════════════════════╗");
-                    Console.WriteLine("\t\t║           CREATE NEW ACCOUNT           ║");
-                    Console.WriteLine("\t\t╠════════════════════════════════════════╣");
-                    Console.WriteLine("\t\t│\t      Enter Details              │");
+                    DisplayPageHeaderSubtitle("CREATE NEW ACCOUNT", "Enter Details");
                     Console.WriteLine("\t\t│\t\t\t\t\t │");
 
                     Console.Write("\t\t│    First Name: ");
@@ -256,10 +248,8 @@ namespace dotNetAssignment1Attempt
                 do
                 {
                     Console.Clear();
-                    Console.WriteLine("\t\t╔════════════════════════════════════════╗");
-                    Console.WriteLine("\t\t║            SEARCH AN ACCOUNT           ║");
-                    Console.WriteLine("\t\t╠════════════════════════════════════════╣");
-                    Console.WriteLine("\t\t│            Enter the details           │");
+                    DisplayPageHeaderSubtitle("SEARCH AN ACCOUNT", "Enter the Details");
+
                     Console.WriteLine("\t\t│\t\t\t\t\t │");
                     Console.Write("\t\t│    Account Number: ");
                     CursorCoordinates acctNumCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
@@ -320,10 +310,8 @@ namespace dotNetAssignment1Attempt
                 do
                 {
                     Console.Clear();
-                    Console.WriteLine("\t\t╔════════════════════════════════════════╗");
-                    Console.WriteLine("\t\t║                Deposit                 ║");
-                    Console.WriteLine("\t\t╠════════════════════════════════════════╣");
-                    Console.WriteLine("\t\t│\t      Enter Details              │");
+                    DisplayPageHeaderSubtitle("DEPOSIT", "Enter the Details");
+
                     Console.WriteLine("\t\t│\t\t\t\t\t │");
 
                     Console.Write("\t\t│    Account number: ");
@@ -351,10 +339,7 @@ namespace dotNetAssignment1Attempt
             void AccountStatementPage()
             {
                 Console.Clear();
-                Console.WriteLine("\t\t╔════════════════════════════════════════╗");
-                Console.WriteLine("\t\t║                STATEMENT               ║");
-                Console.WriteLine("\t\t╠════════════════════════════════════════╣");
-                Console.WriteLine("\t\t│              Enter Details             │");
+                DisplayPageHeaderSubtitle("STATEMENT", "Enter the Details");
                 Console.WriteLine("\t\t│\t\t\t\t\t │");
                 Console.Write("\t\t│    Account Number: ");
                 CursorCoordinates acctNumCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
@@ -415,9 +400,7 @@ namespace dotNetAssignment1Attempt
 
             void DeleteAccountPage() {
                 Console.Clear();
-                Console.WriteLine("\t\t╔════════════════════════════════════════╗");
-                Console.WriteLine("\t\t║            DELETE AN ACCOUNT           ║");
-                Console.WriteLine("\t\t╠════════════════════════════════════════╣");
+                DisplayPageHeader("DELETE AN ACCOUNT");
                 string acctNumber = GetAccountNum();
 
                 if (File.Exists(acctNumber + ".txt"))
@@ -446,9 +429,7 @@ namespace dotNetAssignment1Attempt
 
                     BankAccount account = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
 
-                    Console.WriteLine("\n\t\t╔════════════════════════════════════════╗");
-                    Console.WriteLine("\t\t║            ACCOUNT DETAILS             ║");
-                    Console.WriteLine("\t\t╠════════════════════════════════════════╣");
+                    DisplayPageHeader("ACCOUNT DETAILS");
                     Console.WriteLine("\t\t│\t\t\t\t\t │");
 
                     account.Display();
@@ -465,6 +446,63 @@ namespace dotNetAssignment1Attempt
                 {
                     Console.WriteLine("Error account not found");
                 }
+            }
+
+            void DisplayPageHeader(string text)
+            {
+                int num = text.Length;
+                int half = (40 - num) / 2;
+                Boolean isOdd = false;
+                if ((num % 2) != 0)
+                {
+                    isOdd = true;
+                }
+
+                Console.WriteLine("\n\t\t╔════════════════════════════════════════╗");
+                Console.Write("\t\t║");
+                for (int i = 0; i < half; i++)
+                {
+                    Console.Write(" ");
+                }
+                Console.Write(text);
+                for (int i = 0; i < half; i++)
+                {
+                    Console.Write(" ");
+                }
+                if (isOdd)
+                {
+                    Console.Write(" ");
+                }
+                Console.WriteLine("║");
+                Console.WriteLine("\t\t╠════════════════════════════════════════╣");
+            }
+
+            void DisplayPageHeaderSubtitle(string title, string subTitle)
+            {
+                int num = subTitle.Length;
+                int half = (40 - num) / 2;
+                Boolean isOdd = false;
+                if ((num % 2) != 0)
+                {
+                    isOdd = true;
+                }
+                DisplayPageHeader(title);
+                Console.Write("\t\t│");
+                for (int i = 0; i < half; i++)
+                {
+                    Console.Write(" ");
+                }
+                Console.Write(subTitle);
+                for (int i = 0; i < half; i++)
+                {
+                    Console.Write(" ");
+                }
+
+                if (isOdd)
+                {
+                    Console.Write(" ");
+                }
+                Console.WriteLine("│");
             }
 
             string GetAccountNum()

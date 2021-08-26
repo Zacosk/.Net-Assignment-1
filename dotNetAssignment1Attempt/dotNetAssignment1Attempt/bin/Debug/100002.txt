@@ -1,0 +1,7 @@
+First Name|Zac
+Last Name|Loofs
+Address|7 Orinoco st, Pymble
+Phone|12984571
+Email|zac@gmail.com
+AccountNo|100002
+Balance|0
