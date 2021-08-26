@@ -245,6 +245,7 @@ namespace dotNetAssignment1Attempt
 
             void SearchAccountPage()
             {
+                Boolean exitPage = false;
                 do
                 {
                     Console.Clear();
@@ -285,25 +286,34 @@ namespace dotNetAssignment1Attempt
 
                         BankAccount account = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
 
-                        Console.WriteLine("\n\t\t╔════════════════════════════════════════╗");
-                        Console.WriteLine("\t\t║            ACCOUNT DETAILS             ║");
-                        Console.WriteLine("\t\t╠════════════════════════════════════════╣");
+                        DisplayPageHeader("ACCOUNT DETAILS");
+
                         Console.WriteLine("\t\t│\t\t\t\t\t │");
 
                         account.Display();
                         Console.WriteLine("\t\t└────────────────────────────────────────┘");
+
+                        Console.Write("\n\t\tSearch another account (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
                     }
                     else
                     {
                         Console.WriteLine("\n\t\tError account not found");
+                        Console.Write("\n\t\tRetry (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
                     }
-                    Console.Write("\n\t\tSearch another account (y/n)? ");
-                } while (UserInputYN());
-                
+                } while (!exitPage);
             }
 
             void DepositPage()
             {
+                Boolean exitPage = false;
                 Boolean validInput = false;
                 decimal amount;
                 int accountNum;
@@ -331,71 +341,91 @@ namespace dotNetAssignment1Attempt
 
                     Console.SetCursorPosition(amountCursor.y, amountCursor.x);
                     amount = Convert.ToDecimal(Console.ReadLine());
-                    //if account found... if not...
+                    
+                    if (File.Exists(accountNum + ".txt"))
+                    {
+                        //if file does not have amount
+                    }
 
-                } while (!validInput);
+                } while (!exitPage);
+            }
+
+            void WithdrawPage()
+            {
+
             }
 
             void AccountStatementPage()
             {
-                Console.Clear();
-                DisplayPageHeaderSubtitle("STATEMENT", "Enter the Details");
-                Console.WriteLine("\t\t│\t\t\t\t\t │");
-                Console.Write("\t\t│    Account Number: ");
-                CursorCoordinates acctNumCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
-
-                Console.WriteLine("\t\t\t │");
-                Console.WriteLine("\t\t└────────────────────────────────────────┘");
-
-                Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                string acctNumber = Console.ReadLine();
-                if (File.Exists(acctNumber + ".txt"))
+                Boolean exitPage = false;
+                do
                 {
-                    string fName = "";
-                    string lName = "";
-                    string address = "";
-                    int phone = 0;
-                    string email = "";
-                    double balance = 0;
-                    string[] fileText = File.ReadAllLines(acctNumber + ".txt");
-                    string[] keyWords = { "First Name|", "Last Name|", "Address|", "Phone|", "Email|", "Balance|" };
+                    Console.Clear();
+                    DisplayPageHeaderSubtitle("STATEMENT", "Enter the Details");
+                    Console.WriteLine("\t\t│\t\t\t\t\t │");
+                    Console.Write("\t\t│    Account Number: ");
+                    CursorCoordinates acctNumCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
-                    for (int i = 0; i < fileText.Length; i++)
+                    Console.WriteLine("\t\t\t │");
+                    Console.WriteLine("\t\t└────────────────────────────────────────┘");
+
+                    Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
+                    string acctNumber = Console.ReadLine();
+                    if (File.Exists(acctNumber + ".txt"))
                     {
-                        switch (i)
+                        string fName = "";
+                        string lName = "";
+                        string address = "";
+                        int phone = 0;
+                        string email = "";
+                        double balance = 0;
+                        string[] fileText = File.ReadAllLines(acctNumber + ".txt");
+                        string[] keyWords = { "First Name|", "Last Name|", "Address|", "Phone|", "Email|", "Balance|" };
+
+                        for (int i = 0; i < fileText.Length; i++)
                         {
-                            case 0: fName = fileText[i].Replace(keyWords[0], ""); break;
-                            case 1: lName = fileText[i].Replace(keyWords[1], ""); break;
-                            case 2: address = fileText[i].Replace(keyWords[2], ""); break;
-                            case 3: phone = Convert.ToInt32(fileText[i].Replace(keyWords[3], "")); break;
-                            case 4: email = fileText[i].Replace(keyWords[4], ""); break;
-                            case 6: balance = Convert.ToDouble(fileText[i].Replace(keyWords[5], "")); break;
+                            switch (i)
+                            {
+                                case 0: fName = fileText[i].Replace(keyWords[0], ""); break;
+                                case 1: lName = fileText[i].Replace(keyWords[1], ""); break;
+                                case 2: address = fileText[i].Replace(keyWords[2], ""); break;
+                                case 3: phone = Convert.ToInt32(fileText[i].Replace(keyWords[3], "")); break;
+                                case 4: email = fileText[i].Replace(keyWords[4], ""); break;
+                                case 6: balance = Convert.ToDouble(fileText[i].Replace(keyWords[5], "")); break;
+                            }
+                        }
+
+                        BankAccount account = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
+
+                        Console.WriteLine("\n\n\t\tAccount found! The statement is displayed below...");
+                        DisplayPageHeaderSubtitle("STATEMENT", "Account Statement");
+                        Console.WriteLine("\t\t│\t\t\t\t\t │");
+
+                        account.Display();
+                        Console.WriteLine("\t\t└────────────────────────────────────────┘");
+                        Console.Write("\n\t\tEmail statement (y/n)? ");
+                        if (UserInputYN())
+                        {
+                            //Put in code to email statement
+                            Console.WriteLine("\n\t\tEmail Sent Successfully!...");
+                        }
+                        Console.Write("\n\t\tSearch for another account (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
                         }
                     }
-
-                    BankAccount account = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
-
-                    Console.WriteLine("\n\n\t\tAccount found! The statement is displayed below...");
-                    Console.WriteLine("\t\t╔════════════════════════════════════════╗");
-                    Console.WriteLine("\t\t║                STATEMENT               ║");
-                    Console.WriteLine("\t\t╠════════════════════════════════════════╣");
-                    Console.WriteLine("\t\t│    Account Statement                   │");
-                    Console.WriteLine("\t\t│\t\t\t\t\t │");
-
-                    account.Display();
-                    Console.WriteLine("\t\t└────────────────────────────────────────┘");
-                    Console.Write("\n\t\tEmail statement (y/n)? ");
-                    if (UserInputYN())
+                    else
                     {
-                        //Put in code to email statement
-                        Console.WriteLine("\n\t\tEmail Sent Successfully!...");
+                        Console.WriteLine("\n\t\tError account not found");
+                        Console.Write("\n\t\tRetry (y/n)? ");
+
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Error account not found");
-                }
-                Console.ReadKey();
+                } while (!exitPage); 
             }
 
             void DeleteAccountPage() {

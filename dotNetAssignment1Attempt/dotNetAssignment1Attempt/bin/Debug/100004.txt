@@ -1,7 +1,0 @@
-First Name|Zac
-Last Name|Loofs
-Address|7 Orinoco
-Phone|12476
-Email|zac@gmail.com
-AccountNo|100004
-Balance|0
