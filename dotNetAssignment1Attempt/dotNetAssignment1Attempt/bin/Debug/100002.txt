@@ -4,6 +4,9 @@ Address|7 Orinoco
 Phone|346235
 Email|zac@gmail.com
 AccountNo|100002
-Balance|350
-27/08/2021|Deposit|250|250
+Balance|600
 27/08/2021|Deposit|100|350
+27/08/2021M|Withdraw|100|250
+27/08/2021M|Deposit|1000|1250
+27/08/2021M|Withdraw|200|1050
+27/08/2021M|Withdraw|450|600

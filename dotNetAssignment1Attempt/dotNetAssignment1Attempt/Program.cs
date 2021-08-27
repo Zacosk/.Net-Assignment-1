@@ -726,6 +726,12 @@ namespace dotNetAssignment1Attempt
                 } else
                 {
                     //Loop over transaction lines and replace them, replace last line
+                    fileText[7] = fileText[8];
+                    fileText[8] = fileText[9];
+                    fileText[9] = fileText[10];
+                    fileText[10] = fileText[11];
+                    fileText[11] = time + "|" + type + "|" + amount + "|" + balance;
+                    File.WriteAllLines(name, fileText);
                 }
             }
         }
