@@ -4,4 +4,4 @@ Address|7 Orinodo street
 Phone|12341254
 Email|zac@gmail.com
 AccountNo|100002
-Balance|500
+Balance|450
