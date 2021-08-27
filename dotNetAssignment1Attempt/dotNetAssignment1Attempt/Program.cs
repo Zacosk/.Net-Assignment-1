@@ -315,8 +315,6 @@ namespace dotNetAssignment1Attempt
             {
                 Boolean exitPage = false;
                 Boolean validInput = false;
-                decimal amount;
-                int accountNum;
                 do
                 {
                     Console.Clear();
@@ -337,14 +335,41 @@ namespace dotNetAssignment1Attempt
                     CursorCoordinates errCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    accountNum = Convert.ToInt32(Console.ReadLine());
-
-                    Console.SetCursorPosition(amountCursor.y, amountCursor.x);
-                    amount = Convert.ToDecimal(Console.ReadLine());
+                    int accountNum = Convert.ToInt32(Console.ReadLine());
                     
                     if (File.Exists(accountNum + ".txt"))
                     {
-                        //if file does not have amount
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.WriteLine("\t\tAccount found! Enter the amount...");
+
+                        Console.SetCursorPosition(amountCursor.y, amountCursor.x);
+                        double amount = Convert.ToDouble(Console.ReadLine());
+
+                        string[] fileText = File.ReadAllLines(accountNum + ".txt");
+                        double balance = Convert.ToDouble(fileText[6].Replace("Balance|", ""));
+
+                        fileText[6] = "Balance|" + (amount + balance);
+
+                        File.WriteAllLines(accountNum + ".txt", fileText);
+
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.WriteLine("\n\t\tDeposit Successful");
+
+                        Console.Write("\t\tDeposit in another account (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
+
+                    } else
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.WriteLine("\t\tError account not found");
+                        Console.Write("\n\t\tRetry (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
                     }
 
                 } while (!exitPage);
