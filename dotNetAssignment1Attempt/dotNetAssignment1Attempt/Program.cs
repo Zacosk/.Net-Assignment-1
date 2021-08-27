@@ -15,13 +15,13 @@ namespace dotNetAssignment1Attempt
             //Display login page and validate user inputs
             LoginPage();
 
-            Boolean exit = false;
+            Boolean exitProgram = false;
 
             //Determine the next account number to be used for a new account
             int currentAcctNum = DetermineLatesteAccountNumber();
 
-            int mainErrCursorX = 0;
-            int mainErrCursorY = 0;
+            int mainErrCursorX;
+            int mainErrCursorY;
 
             do {
                 string mainUserInput = MainMenuPage();
@@ -53,21 +53,22 @@ namespace dotNetAssignment1Attempt
                         break;
 
                     case "7": //Exit
+                        //Ask the user if they want to exit (y/n) if yes set exit program to true
                         Console.SetCursorPosition(mainErrCursorY, mainErrCursorX);
                         Console.Write("Are you sure you want to exit (y/n)? ");
                         if (UserInputYN())
                         {
-                            exit = true;
+                            exitProgram = true;
                         }
                         break;
 
-                    default: //If the char isnt 1 - 7
+                    default: //If the char isnt 1 - 7 display error message
                         Console.SetCursorPosition(mainErrCursorY, mainErrCursorX);
-                        Console.WriteLine("Error Invalid input");
+                        Console.WriteLine("Error invalid input");
                         Console.ReadKey();
                         break;
                 }
-            } while (!exit);
+            } while (!exitProgram);
 
             //Display login page and check if user inputs match login details
             void LoginPage()
@@ -157,7 +158,7 @@ namespace dotNetAssignment1Attempt
                 {
                     int phone;
                     string firstName, lastName, address, email;
-                    decimal balance;
+                    
                     Console.Clear();
                     DisplayPageHeaderSubtitle("CREATE NEW ACCOUNT", "Enter Details");
                     Console.WriteLine("\t\t│\t\t\t\t\t │");
@@ -342,6 +343,8 @@ namespace dotNetAssignment1Attempt
                         fileText[6] = "Balance|" + (amount + balance);
 
                         File.WriteAllLines(accountNum + ".txt", fileText);
+                        
+                        AppendTransactionDetails(accountNum + ".txt", "Deposit", Convert.ToInt32(amount), Convert.ToInt32(balance+amount));
 
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.WriteLine("\n\t\tDeposit Successful");
@@ -351,7 +354,6 @@ namespace dotNetAssignment1Attempt
                         {
                             exitPage = true;
                         }
-
                     } else
                     {
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
@@ -408,6 +410,8 @@ namespace dotNetAssignment1Attempt
                                 fileText[6] = "Balance|" + (balance - amount);
 
                                 File.WriteAllLines(accountNum + ".txt", fileText);
+
+                                AppendTransactionDetails(accountNum + ".txt", "Withdraw", Convert.ToInt32(amount), Convert.ToInt32(balance - amount));
 
                                 Console.SetCursorPosition(errCursor.y, errCursor.x);
                                 Console.WriteLine("\n\t\tWithdraw Successful");
@@ -709,6 +713,20 @@ namespace dotNetAssignment1Attempt
             {
                 //FileStream newFile = new FileStream(accountNum + ".txt", FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 File.WriteAllText(accountNum + ".txt", "First Name|" + fName +"\nLast Name|" + lName + "\nAddress|" + address + "\nPhone|" + phone + "\nEmail|" + email + "\nAccountNo|" + accountNum + "\nBalance|" + 0);
+            }
+
+            void AppendTransactionDetails(string name, string type, int amount, int balance)
+            {
+                string time = Convert.ToString(File.GetLastAccessTime(name));
+                time = time.Remove(10, 11);
+                string[] fileText = File.ReadAllLines(name);
+                if (fileText.Length < 12)
+                {
+                    File.AppendAllText(name, time + "|" + type + "|" + amount + "|" + balance);
+                } else
+                {
+                    //Loop over transaction lines and replace them, replace last line
+                }
             }
         }
     }

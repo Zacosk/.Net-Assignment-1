@@ -1,7 +1,9 @@
 First Name|Zac
 Last Name|Loofs
-Address|7 Orinodo street
-Phone|12341254
+Address|7 Orinoco
+Phone|346235
 Email|zac@gmail.com
 AccountNo|100002
-Balance|450
+Balance|350
+27/08/2021|Deposit|250|250
+27/08/2021|Deposit|100|350
