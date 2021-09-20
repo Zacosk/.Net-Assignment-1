@@ -157,6 +157,7 @@ namespace dotNetAssignment1Attempt
                 {
                     int phone;
                     string firstName, lastName, address, email;
+                    bool validAccountCreated = false;
                     
                     Console.Clear();
                     DisplayPageHeaderSubtitle("CREATE NEW ACCOUNT", "Enter Details");
@@ -212,16 +213,20 @@ namespace dotNetAssignment1Attempt
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.Write("Is this information correct (y/n)? ");
                         validInput = UserInputYN();
-
-                        //create account file
-                        CreateAccountFile(currentAcctNum, firstName, lastName, address, phone, email);
+                        validAccountCreated = true;
                     }
                     else
                     {
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.Write("Error invalid email address ");
                         Console.ReadKey();
-                    } 
+                    }
+                    
+                    if (validAccountCreated)
+                    {
+                        BankAccount account = new BankAccount(currentAcctNum, firstName, lastName, address, phone, email, 0);
+                        account.CreateAccountFile();
+                    }
                 
                 } while (!validInput);
                 
@@ -249,32 +254,10 @@ namespace dotNetAssignment1Attempt
                     Console.WriteLine("\t\t└────────────────────────────────────────┘");
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    string acctNumber = Console.ReadLine();
+                    int acctNumber = Convert.ToInt32(Console.ReadLine());
                     if (File.Exists(acctNumber + ".txt"))
                     {
-                        string fName = "";
-                        string lName = "";
-                        string address = "";
-                        int phone = 0;
-                        string email = "";
-                        double balance = 0;
-                        string[] fileText = File.ReadAllLines(acctNumber + ".txt");
-                        string[] keyWords = { "First Name|", "Last Name|", "Address|", "Phone|", "Email|", "Balance|" };
-
-                        for (int i = 0; i < fileText.Length; i++)
-                        {
-                            switch (i)
-                            {
-                                case 0: fName = fileText[i].Replace(keyWords[0], ""); break;
-                                case 1: lName = fileText[i].Replace(keyWords[1], ""); break;
-                                case 2: address = fileText[i].Replace(keyWords[2], ""); break;
-                                case 3: phone = Convert.ToInt32(fileText[i].Replace(keyWords[3], "")); break;
-                                case 4: email = fileText[i].Replace(keyWords[4], ""); break;
-                                case 6: balance = Convert.ToDouble(fileText[i].Replace(keyWords[5], "")); break;
-                            }
-                        }
-
-                        BankAccount account = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
+                        BankAccount account = LoadBankAccount(acctNumber);
 
                         DisplayPageHeader("ACCOUNT DETAILS", true);
 
@@ -324,20 +307,17 @@ namespace dotNetAssignment1Attempt
                     
                     if (File.Exists(accountNum + ".txt"))
                     {
+                        BankAccount account = LoadBankAccount(accountNum);
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.WriteLine("\t\tAccount found! Enter the amount...");
 
                         Console.SetCursorPosition(amountCursor.y, amountCursor.x);
-                        double amount = Convert.ToDouble(Console.ReadLine());
+                        float amount = float.Parse(Console.ReadLine());
 
-                        string[] fileText = File.ReadAllLines(accountNum + ".txt");
-                        double balance = Convert.ToDouble(fileText[6].Replace("Balance|", ""));
+                        account.SetBalance(account.GetBalance() + amount);
 
-                        fileText[6] = "Balance|" + (amount + balance);
-
-                        File.WriteAllLines(accountNum + ".txt", fileText);
-                        
-                        AppendTransactionDetails(accountNum + ".txt", "Deposit", Convert.ToInt32(amount), Convert.ToInt32(balance+amount));
+                        account.WriteAccountToFile();
+                        account.AppendTransactionDetails("Deposit", Convert.ToInt32(amount));
 
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.WriteLine("\n\t\tDeposit Successful");
@@ -386,24 +366,21 @@ namespace dotNetAssignment1Attempt
 
                     if (File.Exists(accountNum + ".txt"))
                     {
+                        BankAccount account = LoadBankAccount(accountNum);
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.WriteLine("\t\tAccount found! Enter the amount...");
 
                         do
                         {
                             Console.SetCursorPosition(amountCursor.y, amountCursor.x);
-                            double amount = Convert.ToDouble(Console.ReadLine());
+                            float amount = float.Parse(Console.ReadLine());
 
-                            string[] fileText = File.ReadAllLines(accountNum + ".txt");
-                            double balance = Convert.ToDouble(fileText[6].Replace("Balance|", ""));
-
-                            if (amount <= balance)
+                            if (amount <= account.GetBalance())
                             {
-                                fileText[6] = "Balance|" + (balance - amount);
+                                account.SetBalance(account.GetBalance() - amount);
 
-                                File.WriteAllLines(accountNum + ".txt", fileText);
-
-                                AppendTransactionDetails(accountNum + ".txt", "Withdraw", Convert.ToInt32(amount), Convert.ToInt32(balance - amount));
+                                account.WriteAccountToFile();
+                                account.AppendTransactionDetails("Withdraw", Convert.ToInt32(amount));
 
                                 Console.SetCursorPosition(errCursor.y, errCursor.x);
                                 Console.WriteLine("\n\t\tWithdraw Successful");
@@ -455,9 +432,10 @@ namespace dotNetAssignment1Attempt
                     Console.WriteLine("\t\t└────────────────────────────────────────┘");
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    string acctNumber = Console.ReadLine();
+                    int acctNumber = Convert.ToInt32(Console.ReadLine());
                     if (File.Exists(acctNumber + ".txt"))
                     {
+                        /*
                         string fName = "";
                         string lName = "";
                         string address = "";
@@ -480,7 +458,9 @@ namespace dotNetAssignment1Attempt
                             }
                         }
 
-                        BankAccount account = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
+                        BankAccount account = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance); */
+
+                        BankAccount account = LoadBankAccount(acctNumber);
 
                         Console.WriteLine("\n\n\t\tAccount found! The statement is displayed below...");
                         DisplayPageHeaderSubtitle("STATEMENT", "Account Statement");
@@ -516,33 +496,11 @@ namespace dotNetAssignment1Attempt
             void DeleteAccountPage() {
                 Console.Clear();
                 DisplayPageHeader("DELETE AN ACCOUNT", true);
-                string acctNumber = GetAccountNum();
+                int acctNumber = Convert.ToInt32(GetAccountNum());
 
                 if (File.Exists(acctNumber + ".txt"))
                 {
-                    string fName = "";
-                    string lName = "";
-                    string address = "";
-                    int phone = 0;
-                    string email = "";
-                    double balance = 0;
-                    string[] fileText = File.ReadAllLines(acctNumber + ".txt");
-                    string[] keyWords = { "First Name|", "Last Name|", "Address|", "Phone|", "Email|", "Balance|" };
-
-                    for (int i = 0; i < fileText.Length; i++)
-                    {
-                        switch (i)
-                        {
-                            case 0: fName = fileText[i].Replace(keyWords[0], ""); break;
-                            case 1: lName = fileText[i].Replace(keyWords[1], ""); break;
-                            case 2: address = fileText[i].Replace(keyWords[2], ""); break;
-                            case 3: phone = Convert.ToInt32(fileText[i].Replace(keyWords[3], "")); break;
-                            case 4: email = fileText[i].Replace(keyWords[4], ""); break;
-                            case 6: balance = Convert.ToDouble(fileText[i].Replace(keyWords[5], "")); break;
-                        }
-                    }
-
-                    BankAccount account = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
+                    BankAccount account = LoadBankAccount(acctNumber);
 
                     DisplayPageHeader("ACCOUNT DETAILS", true);
 
@@ -551,7 +509,8 @@ namespace dotNetAssignment1Attempt
                     Console.Write("\n\t\tDelete (y/n)? ");
                     if (UserInputYN())
                     {
-                        File.Delete(acctNumber + ".txt");
+                        //File.Delete(acctNumber + ".txt");
+                        account.DeleteAccountFile();
                         Console.WriteLine("\n\t\tAccount Deleted...");
                         Console.ReadKey();
                     }
@@ -707,30 +666,39 @@ namespace dotNetAssignment1Attempt
                 return acctNumCount;
             }
 
+            /*
             void CreateAccountFile(int accountNum, string fName, string lName, string address, int phone, string email)
             {
                 //FileStream newFile = new FileStream(accountNum + ".txt", FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 File.WriteAllText(accountNum + ".txt", "First Name|" + fName +"\nLast Name|" + lName + "\nAddress|" + address + "\nPhone|" + phone + "\nEmail|" + email + "\nAccountNo|" + accountNum + "\nBalance|" + 0);
-            }
+            } */
 
-            void AppendTransactionDetails(string name, string type, int amount, int balance)
+            BankAccount LoadBankAccount(int acctNumber)
             {
-                string time = Convert.ToString(File.GetLastAccessTime(name));
-                time = time.Remove(10, 11);
-                string[] fileText = File.ReadAllLines(name);
-                if (fileText.Length < 12)
+                string fName = "";
+                string lName = "";
+                string address = "";
+                int phone = 0;
+                string email = "";
+                float balance = 0;
+                string[] fileText = File.ReadAllLines(acctNumber + ".txt");
+                string[] keyWords = { "First Name|", "Last Name|", "Address|", "Phone|", "Email|", "Balance|" };
+
+                for (int i = 0; i < fileText.Length; i++)
                 {
-                    File.AppendAllText(name, time + "|" + type + "|" + amount + "|" + balance);
-                } else
-                {
-                    //Loop over transaction lines and replace them, replace last line
-                    fileText[7] = fileText[8];
-                    fileText[8] = fileText[9];
-                    fileText[9] = fileText[10];
-                    fileText[10] = fileText[11];
-                    fileText[11] = time + "|" + type + "|" + amount + "|" + balance;
-                    File.WriteAllLines(name, fileText);
+                    switch (i)
+                    {
+                        case 0: fName = fileText[i].Replace(keyWords[0], ""); break;
+                        case 1: lName = fileText[i].Replace(keyWords[1], ""); break;
+                        case 2: address = fileText[i].Replace(keyWords[2], ""); break;
+                        case 3: phone = Convert.ToInt32(fileText[i].Replace(keyWords[3], "")); break;
+                        case 4: email = fileText[i].Replace(keyWords[4], ""); break;
+                        case 6: balance = float.Parse(fileText[i].Replace(keyWords[5], "")); break;
+                    }
                 }
+
+                BankAccount loadedAccount = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
+                return loadedAccount;
             }
         }
     }
@@ -749,9 +717,9 @@ namespace dotNetAssignment1Attempt
     {
         private string firstName, lastName, address, email;
         private int accountNum, phone;
-        private double balance;
+        private float balance;
 
-        public BankAccount(int accountNum, string firstName, string lastName, string address, int phone, string email, double balance)
+        public BankAccount(int accountNum, string firstName, string lastName, string address, int phone, string email, float balance)
         {
             this.accountNum = accountNum;
             this.firstName = firstName;
@@ -770,6 +738,55 @@ namespace dotNetAssignment1Attempt
             Console.WriteLine("\t\t│    Address: {0}\t │", this.address);
             Console.WriteLine("\t\t│    Phone: {0}\t\t\t │", this.phone);
             Console.WriteLine("\t\t│    Email: {0}\t\t │", this.email);
+        }
+
+        public float GetBalance()
+        {
+            return this.balance;
+        }
+
+        public void SetBalance(float bal)
+        {
+            this.balance = bal;
+        }
+
+        public void CreateAccountFile()
+        {
+            File.WriteAllText(accountNum + ".txt", "First Name|" + this.firstName + "\nLast Name|" + this.lastName + "\nAddress|" + this.address + "\nPhone|" + this.phone + "\nEmail|" + this.email + "\nAccountNo|" + this.accountNum + "\nBalance|" + this.balance);
+        }
+
+        public void WriteAccountToFile()
+        {
+            string[] fileText = File.ReadAllLines(this.accountNum + ".txt");
+            fileText[6] = "Balance|" + this.balance;
+            File.WriteAllLines(this.accountNum + ".txt", fileText);
+        }
+
+        public void AppendTransactionDetails(string type, int amount)
+        {
+            string name = accountNum + ".txt";
+            string time = Convert.ToString(File.GetLastAccessTime(name));
+            time = time.Remove(10, 11);
+            string[] fileText = File.ReadAllLines(name);
+            if (fileText.Length < 12)
+            {
+                File.AppendAllText(name, time + "|" + type + "|" + amount + "|" + this.balance);
+            }
+            else
+            {
+                //Loop over transaction lines and replace them, replace last line
+                fileText[7] = fileText[8];
+                fileText[8] = fileText[9];
+                fileText[9] = fileText[10];
+                fileText[10] = fileText[11];
+                fileText[11] = time + "|" + type + "|" + amount + "|" + this.balance;
+                File.WriteAllLines(name, fileText);
+            }
+        }
+
+        public void DeleteAccountFile()
+        {
+            File.Delete(this.accountNum + ".txt");
         }
     }
 }
