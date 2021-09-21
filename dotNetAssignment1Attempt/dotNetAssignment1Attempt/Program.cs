@@ -736,7 +736,13 @@ namespace dotNetAssignment1Attempt
             Console.WriteLine("\t\t│    Account Balance: ${0}\t\t │", this.balance);
             Console.WriteLine("\t\t│    First Name: {0}\t\t\t │", this.firstName);
             Console.WriteLine("\t\t│    Last Name: {0}\t\t\t │", this.lastName);
-            Console.WriteLine("\t\t│    Address: {0}\t │", this.address);
+            Console.Write("\t\t│    Address: {0}", this.address);
+            int length = 27 - this.address.Length;
+            for (int i = 0; i < length; i++)
+            {
+                Console.Write(" ");
+            }
+            Console.WriteLine("│");
             Console.WriteLine("\t\t│    Phone: {0}\t\t\t │", this.phone);
             Console.WriteLine("\t\t│    Email: {0}\t\t │", this.email);
         }
@@ -767,7 +773,7 @@ namespace dotNetAssignment1Attempt
         {
             string name = accountNum + ".txt";
             string time = Convert.ToString(File.GetLastAccessTime(name));
-            time = time.Remove(10, 11);
+            time = time.Remove(10, (time.Length-10));
             string[] fileText = File.ReadAllLines(name);
             if (fileText.Length < 12)
             {
