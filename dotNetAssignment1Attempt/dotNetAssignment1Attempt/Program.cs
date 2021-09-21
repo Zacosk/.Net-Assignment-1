@@ -85,6 +85,7 @@ namespace dotNetAssignment1Attempt
                     CursorCoordinates loginUserCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.WriteLine("\t\t\t │");
+                    CursorCoordinates loginPassLineCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
                     Console.Write("\t\t│    Password: ");
 
                     CursorCoordinates loginPassCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
@@ -99,7 +100,32 @@ namespace dotNetAssignment1Attempt
                     string userInputName = Console.ReadLine();
 
                     Console.SetCursorPosition(loginPassCursor.y, loginPassCursor.x);
-                    string userInputPassword = Console.ReadLine();
+                    string userInputPassword = "";// = Console.ReadLine();
+                    string hiddenPassword = "";
+
+                    bool completedPassword = false;
+                    while (!completedPassword)
+                    {
+                        var key = System.Console.ReadKey(true);
+                        if (key.Key == ConsoleKey.Enter)
+                        {
+                            break;
+                        } else if (key.Key == ConsoleKey.Backspace)
+                        {
+                            Console.SetCursorPosition(loginPassLineCursor.y, loginPassLineCursor.x);
+                            Console.Write("\t\t│    Password:                           │");
+                            hiddenPassword = hiddenPassword.Remove(hiddenPassword.Length - 1);
+                            userInputPassword = userInputPassword.Remove(userInputPassword.Length - 1);
+                            Console.SetCursorPosition(loginPassCursor.y, loginPassCursor.x);
+                            Console.Write(hiddenPassword);
+                        } else
+                        {
+                            userInputPassword += key.KeyChar;
+                            hiddenPassword += "*";
+                            Console.SetCursorPosition(loginPassCursor.y, loginPassCursor.x);
+                            Console.Write(hiddenPassword);
+                        }
+                    }
 
                     Console.SetCursorPosition(errCursor.y, errCursor.x);
                     
@@ -435,31 +461,6 @@ namespace dotNetAssignment1Attempt
                     int acctNumber = Convert.ToInt32(Console.ReadLine());
                     if (File.Exists(acctNumber + ".txt"))
                     {
-                        /*
-                        string fName = "";
-                        string lName = "";
-                        string address = "";
-                        int phone = 0;
-                        string email = "";
-                        double balance = 0;
-                        string[] fileText = File.ReadAllLines(acctNumber + ".txt");
-                        string[] keyWords = { "First Name|", "Last Name|", "Address|", "Phone|", "Email|", "Balance|" };
-
-                        for (int i = 0; i < fileText.Length; i++)
-                        {
-                            switch (i)
-                            {
-                                case 0: fName = fileText[i].Replace(keyWords[0], ""); break;
-                                case 1: lName = fileText[i].Replace(keyWords[1], ""); break;
-                                case 2: address = fileText[i].Replace(keyWords[2], ""); break;
-                                case 3: phone = Convert.ToInt32(fileText[i].Replace(keyWords[3], "")); break;
-                                case 4: email = fileText[i].Replace(keyWords[4], ""); break;
-                                case 6: balance = Convert.ToDouble(fileText[i].Replace(keyWords[5], "")); break;
-                            }
-                        }
-
-                        BankAccount account = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance); */
-
                         BankAccount account = LoadBankAccount(acctNumber);
 
                         Console.WriteLine("\n\n\t\tAccount found! The statement is displayed below...");
@@ -517,7 +518,8 @@ namespace dotNetAssignment1Attempt
                 }
                 else
                 {
-                    Console.WriteLine("Error account not found");
+                    Console.Write("\n\t\tError account not found ");
+                    Console.ReadKey();
                 }
             }
 
@@ -627,19 +629,22 @@ namespace dotNetAssignment1Attempt
                 return userInputBool;
             }
 
+
+            // Check the user inputted username and password against the login file, return true if user enters valid credentials
             Boolean verifyLogin(string userName, string password)
             {
                 //Create an array of strings from lines of the text file
                 string[] fileText = File.ReadAllLines("login.txt");
+
                 for (int i = 0; i < fileText.Length; i++)
                 {
+                    string[] splitText = fileText[i].Split('|');
+
                     //Check if the line contains the inputted user name
-                    if (fileText[i].Contains(userName))
+                    if (splitText[0].Equals(userName))
                     {
-                        //Remove the user name and | from string
-                        string validPassword = fileText[i].Replace((userName + "|"), "");
                         //Check if the resulting string contains the inputted password
-                        if (validPassword.Contains(password))
+                        if (splitText[1].Equals(password))
                         {
                             return true;
                         }
@@ -647,6 +652,7 @@ namespace dotNetAssignment1Attempt
                 }
                 return false;
             }
+
 
             int DetermineLatesteAccountNumber() {
                 int acctNumCount = 100001;
@@ -666,13 +672,6 @@ namespace dotNetAssignment1Attempt
                 return acctNumCount;
             }
 
-            /*
-            void CreateAccountFile(int accountNum, string fName, string lName, string address, int phone, string email)
-            {
-                //FileStream newFile = new FileStream(accountNum + ".txt", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                File.WriteAllText(accountNum + ".txt", "First Name|" + fName +"\nLast Name|" + lName + "\nAddress|" + address + "\nPhone|" + phone + "\nEmail|" + email + "\nAccountNo|" + accountNum + "\nBalance|" + 0);
-            } */
-
             BankAccount LoadBankAccount(int acctNumber)
             {
                 string fName = "";
@@ -682,18 +681,20 @@ namespace dotNetAssignment1Attempt
                 string email = "";
                 float balance = 0;
                 string[] fileText = File.ReadAllLines(acctNumber + ".txt");
-                string[] keyWords = { "First Name|", "Last Name|", "Address|", "Phone|", "Email|", "Balance|" };
+                //string[] keyWords = { "First Name|", "Last Name|", "Address|", "Phone|", "Email|", "Balance|" };
 
                 for (int i = 0; i < fileText.Length; i++)
                 {
+                    string[] splitText = fileText[i].Split('|');
+
                     switch (i)
                     {
-                        case 0: fName = fileText[i].Replace(keyWords[0], ""); break;
-                        case 1: lName = fileText[i].Replace(keyWords[1], ""); break;
-                        case 2: address = fileText[i].Replace(keyWords[2], ""); break;
-                        case 3: phone = Convert.ToInt32(fileText[i].Replace(keyWords[3], "")); break;
-                        case 4: email = fileText[i].Replace(keyWords[4], ""); break;
-                        case 6: balance = float.Parse(fileText[i].Replace(keyWords[5], "")); break;
+                        case 0: fName = splitText[1]; break;//fileText[i].Replace(keyWords[0], ""); break;
+                        case 1: lName = splitText[1]; break;//fileText[i].Replace(keyWords[1], ""); break;
+                        case 2: address = splitText[1]; break;//fileText[i].Replace(keyWords[2], ""); break;
+                        case 3: phone = Convert.ToInt32(splitText[1]); break;
+                        case 4: email = splitText[1]; break;//fileText[i].Replace(keyWords[4], ""); break;
+                        case 6: balance = float.Parse(splitText[1]); break;
                     }
                 }
 
@@ -782,6 +783,11 @@ namespace dotNetAssignment1Attempt
                 fileText[11] = time + "|" + type + "|" + amount + "|" + this.balance;
                 File.WriteAllLines(name, fileText);
             }
+        }
+
+        public void EmailAccountStatement()
+        {
+
         }
 
         public void DeleteAccountFile()
