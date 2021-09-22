@@ -20,53 +20,52 @@ namespace dotNetAssignment1Attempt
             //Determine the next account number to be used for a new account
             int currentAcctNum = DetermineLatesteAccountNumber();
 
-            int mainErrCursorX;
-            int mainErrCursorY;
+            CursorCoordinates mainErrCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
             do {
-                string mainUserInput = MainMenuPage();
+                int mainUserInput = MainMenuPage();
 
                 switch (mainUserInput)
                 {
-                    case "1": //Create a new account
+                    case 1: //Create a new account
                         CreateAccountPage();
                         break;
 
-                    case "2": //Search for an account
+                    case 2: //Search for an account
                             SearchAccountPage();
                         break;
 
-                    case "3": //Deposit
+                    case 3: //Deposit
                         DepositPage();
                         break;
 
-                    case "4": //Withdraw
+                    case 4: //Withdraw
                         WithdrawPage();
                         break;
 
-                    case "5": //A/C Statement
+                    case 5: //A/C Statement
                         AccountStatementPage();
                         break;
 
-                    case "6": //Delete Account
+                    case 6: //Delete Account
                         DeleteAccountPage();
                         break;
 
-                    case "7": //Exit
+                    case 7: //Exit
                         //Ask the user if they want to exit (y/n) if yes set exit program to true
-                        Console.SetCursorPosition(mainErrCursorY, mainErrCursorX);
+                        Console.SetCursorPosition(mainErrCursor.y, mainErrCursor.x);
                         Console.Write("Are you sure you want to exit (y/n)? ");
                         if (UserInputYN())
                         {
                             exitProgram = true;
                         }
                         break;
-
+                        /*
                     default: //If the char isnt 1 - 7 display error message
                         Console.SetCursorPosition(mainErrCursorY, mainErrCursorX);
                         Console.Write("Error invalid input");
                         Console.ReadKey();
-                        break;
+                        break; */
                 }
             } while (!exitProgram);
 
@@ -144,9 +143,9 @@ namespace dotNetAssignment1Attempt
             }
 
             //Display main menu and detect user input
-            string MainMenuPage()
+            int MainMenuPage()
             {
-                string mainUserInput;
+                //string mainUserInput;
                 Console.Clear();
                 DisplayPageHeaderSubtitle("WELCOME TO SIMPLE BANKING SYSTEM", "Main Menu");
 
@@ -165,14 +164,22 @@ namespace dotNetAssignment1Attempt
                 Console.WriteLine("\t\t │");
                 Console.WriteLine("\t\t└────────────────────────────────────────┘");
                 Console.Write("\n\t\t");
-                
-                mainErrCursorX = Console.CursorTop;
-                mainErrCursorY = Console.CursorLeft;
+
+                mainErrCursor.SetCoordinates(Console.CursorTop, Console.CursorLeft);
                 
                 Console.SetCursorPosition(userInputCursor.y, userInputCursor.x);
-                mainUserInput = Console.ReadLine();
-                
-                return mainUserInput;
+                try
+                {
+                    int mainUserInput = Convert.ToInt32(Console.ReadLine());
+                    return mainUserInput;
+                }
+                catch(System.FormatException)
+                 {
+                    Console.SetCursorPosition(mainErrCursor.y, mainErrCursor.x);
+                    Console.Write("Error invalid input ");
+                    Console.ReadKey();
+                 }
+                return 0;
             }
 
             void CreateAccountPage()
@@ -181,7 +188,7 @@ namespace dotNetAssignment1Attempt
                 Boolean validInput = false;
                 do
                 {
-                    int phone;
+                    int phone = 0;
                     string firstName, lastName, address, email;
                     bool validAccountCreated = false;
                     
@@ -230,7 +237,24 @@ namespace dotNetAssignment1Attempt
                     address = Console.ReadLine();
 
                     Console.SetCursorPosition(phoneCursor.y, phoneCursor.x);
-                    phone = Convert.ToInt32(Console.ReadLine());
+                    try
+                    {
+                        phone = Convert.ToInt32(Console.ReadLine());
+                    }
+                    catch (System.FormatException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.Write("Error invalid phone number ");
+                        Console.ReadKey();
+                        continue;
+                    }
+                    catch (System.OverflowException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.Write("Error phone number too long ");
+                        Console.ReadKey();
+                        continue;
+                    }
 
                     Console.SetCursorPosition(emailCursor.y, emailCursor.x);
                     email = Console.ReadLine();
@@ -365,7 +389,7 @@ namespace dotNetAssignment1Attempt
                     }
                 } while (!exitPage);
             }
-
+            
             void WithdrawPage()
             {
                 Boolean exitPage = false;
@@ -708,6 +732,12 @@ namespace dotNetAssignment1Attempt
     {
         public int x, y;
         public CursorCoordinates(int xCord, int yCord)
+        {
+            x = xCord;
+            y = yCord;
+        }
+
+        public void SetCoordinates(int xCord, int yCord)
         {
             x = xCord;
             y = yCord;
