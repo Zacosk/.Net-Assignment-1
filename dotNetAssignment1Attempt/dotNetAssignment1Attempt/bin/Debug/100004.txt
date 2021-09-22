@@ -1,7 +1,0 @@
-First Name|JJ
-Last Name|Loofs
-Address|7 Orinoco
-Phone|124876
-Email|jj@gmail.com
-AccountNo|100004
-Balance|0

@@ -1,7 +1,0 @@
-First Name|Oskar
-Last Name|Loofs
-Address|7 Orinoco street pymble
-Phone|124698124
-Email|oskar@gmail.com
-AccountNo|100003
-Balance|0

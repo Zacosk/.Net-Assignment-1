@@ -60,12 +60,6 @@ namespace dotNetAssignment1Attempt
                             exitProgram = true;
                         }
                         break;
-                        /*
-                    default: //If the char isnt 1 - 7 display error message
-                        Console.SetCursorPosition(mainErrCursorY, mainErrCursorX);
-                        Console.Write("Error invalid input");
-                        Console.ReadKey();
-                        break; */
                 }
             } while (!exitProgram);
 
@@ -292,6 +286,7 @@ namespace dotNetAssignment1Attempt
             void SearchAccountPage()
             {
                 Boolean exitPage = false;
+                int acctNumber = 0;
                 do
                 {
                     Console.Clear();
@@ -302,10 +297,23 @@ namespace dotNetAssignment1Attempt
                     Console.WriteLine("\t\t\t │");
 
                     Console.WriteLine("\t\t└────────────────────────────────────────┘");
+                    Console.Write("\n\t\t");
+                    CursorCoordinates acctNumErrCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    int acctNumber = Convert.ToInt32(Console.ReadLine());
-                    if (File.Exists(acctNumber + ".txt"))
+                    try
+                    {
+                        acctNumber = Convert.ToInt32(Console.ReadLine());
+                    }
+                    catch (System.FormatException)
+                    {
+                        Console.SetCursorPosition(acctNumErrCursor.y, acctNumErrCursor.x);
+                        Console.Write("Error invalid account number ");
+                        Console.ReadKey();
+                        continue;
+                    }
+
+                    try
                     {
                         BankAccount account = LoadBankAccount(acctNumber);
 
@@ -320,7 +328,7 @@ namespace dotNetAssignment1Attempt
                             exitPage = true;
                         }
                     }
-                    else
+                    catch (System.IO.FileNotFoundException)
                     {
                         Console.WriteLine("\n\t\tError account not found");
                         Console.Write("\n\t\tRetry (y/n)? ");
@@ -335,6 +343,7 @@ namespace dotNetAssignment1Attempt
             void DepositPage()
             {
                 Boolean exitPage = false;
+                int accountNum = 0;
                 do
                 {
                     Console.Clear();
@@ -349,17 +358,27 @@ namespace dotNetAssignment1Attempt
                     Console.WriteLine("\t\t\t\t │");
                     Console.WriteLine("\t\t└────────────────────────────────────────┘");
                     
-                    Console.WriteLine("\t\t");
+                    Console.Write("\n\t\t");
                     CursorCoordinates errCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    int accountNum = Convert.ToInt32(Console.ReadLine());
+                    try
+                    {
+                        accountNum = Convert.ToInt32(Console.ReadLine());
+                    }
+                    catch (System.FormatException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.Write("Error invalid account number ");
+                        Console.ReadKey();
+                        continue;
+                    }
                     
-                    if (File.Exists(accountNum + ".txt"))
+                    try
                     {
                         BankAccount account = LoadBankAccount(accountNum);
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.WriteLine("\t\tAccount found! Enter the amount...");
+                        Console.WriteLine("Account found! Enter the amount...");
 
                         Console.SetCursorPosition(amountCursor.y, amountCursor.x);
                         float amount = float.Parse(Console.ReadLine());
@@ -377,10 +396,11 @@ namespace dotNetAssignment1Attempt
                         {
                             exitPage = true;
                         }
-                    } else
+                    }
+                    catch (System.IO.FileNotFoundException)
                     {
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.WriteLine("\t\tError account not found");
+                        Console.WriteLine("Error account not found");
                         Console.Write("\n\t\tRetry (y/n)? ");
                         if (!UserInputYN())
                         {
@@ -394,6 +414,7 @@ namespace dotNetAssignment1Attempt
             {
                 Boolean exitPage = false;
                 Boolean validInput = true;
+                int accountNum = 0;
                 do
                 {
                     Console.Clear();
@@ -408,17 +429,28 @@ namespace dotNetAssignment1Attempt
                     Console.WriteLine("\t\t\t\t │");
                     Console.WriteLine("\t\t└────────────────────────────────────────┘");
 
-                    Console.WriteLine("\t\t");
+                    Console.Write("\n\t\t");
                     CursorCoordinates errCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    int accountNum = Convert.ToInt32(Console.ReadLine());
 
-                    if (File.Exists(accountNum + ".txt"))
+                    try
+                    {
+                        accountNum = Convert.ToInt32(Console.ReadLine());
+                    }
+                    catch (System.FormatException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.Write("Error invalid account number ");
+                        Console.ReadKey();
+                        continue;
+                    }
+
+                    try
                     {
                         BankAccount account = LoadBankAccount(accountNum);
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.WriteLine("\t\tAccount found! Enter the amount...");
+                        Console.WriteLine("Account found! Enter the amount...");
 
                         do
                         {
@@ -454,10 +486,10 @@ namespace dotNetAssignment1Attempt
                             }
                         } while (!validInput);
                     }
-                    else
+                    catch (System.IO.FileNotFoundException)
                     {
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.WriteLine("\t\tError account not found");
+                        Console.WriteLine("Error account not found");
                         Console.Write("\n\t\tRetry (y/n)? ");
                         if (!UserInputYN())
                         {
@@ -470,6 +502,7 @@ namespace dotNetAssignment1Attempt
             void AccountStatementPage()
             {
                 Boolean exitPage = false;
+                int acctNumber = 0;
                 do
                 {
                     Console.Clear();
@@ -480,10 +513,23 @@ namespace dotNetAssignment1Attempt
 
                     Console.WriteLine("\t\t\t │");
                     Console.WriteLine("\t\t└────────────────────────────────────────┘");
+                    Console.Write("\n\t\t");
+                    CursorCoordinates errCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    int acctNumber = Convert.ToInt32(Console.ReadLine());
-                    if (File.Exists(acctNumber + ".txt"))
+                    try
+                    {
+                        acctNumber = Convert.ToInt32(Console.ReadLine());
+                    }
+                    catch (System.FormatException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.Write("Error invalid account number ");
+                        Console.ReadKey();
+                        continue;
+                    }
+
+                    try
                     {
                         BankAccount account = LoadBankAccount(acctNumber);
 
@@ -505,9 +551,10 @@ namespace dotNetAssignment1Attempt
                             exitPage = true;
                         }
                     }
-                    else
+                    catch (System.IO.FileNotFoundException)
                     {
-                        Console.WriteLine("\n\t\tError account not found");
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.WriteLine("Error account not found");
                         Console.Write("\n\t\tRetry (y/n)? ");
 
                         if (!UserInputYN())
@@ -519,32 +566,70 @@ namespace dotNetAssignment1Attempt
             }
 
             void DeleteAccountPage() {
-                Console.Clear();
-                DisplayPageHeader("DELETE AN ACCOUNT", true);
-                int acctNumber = Convert.ToInt32(GetAccountNum());
-
-                if (File.Exists(acctNumber + ".txt"))
+                int acctNumber = 0;
+                Boolean exitPage = false;
+                do
                 {
-                    BankAccount account = LoadBankAccount(acctNumber);
-
-                    DisplayPageHeader("ACCOUNT DETAILS", true);
-
-                    account.Display();
+                    Console.Clear();
+                    DisplayPageHeader("DELETE AN ACCOUNT", true);
+                    Console.WriteLine("\t\t│            Enter the details           │");
+                    Console.WriteLine("\t\t│\t\t\t\t\t │");
+                    Console.Write("\t\t│    Account Number: ");
+                    CursorCoordinates acctNumCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
+                    Console.WriteLine("\t\t\t │");
                     Console.WriteLine("\t\t└────────────────────────────────────────┘");
-                    Console.Write("\n\t\tDelete (y/n)? ");
-                    if (UserInputYN())
+                    Console.Write("\n\t\t"); 
+                    CursorCoordinates errCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
+
+                    Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
+
+                    try
                     {
-                        //File.Delete(acctNumber + ".txt");
-                        account.DeleteAccountFile();
-                        Console.WriteLine("\n\t\tAccount Deleted...");
-                        Console.ReadKey();
+                        acctNumber = Convert.ToInt32(Console.ReadLine());
                     }
-                }
-                else
-                {
-                    Console.Write("\n\t\tError account not found ");
-                    Console.ReadKey();
-                }
+                    catch (System.FormatException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.WriteLine("Error invalid account number ");
+                        Console.Write("\n\t\tRetry (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
+                        continue;
+                    }
+
+                    try
+                    {
+                        BankAccount account = LoadBankAccount(acctNumber);
+
+                        DisplayPageHeader("ACCOUNT DETAILS", true);
+
+                        account.Display();
+                        Console.WriteLine("\t\t└────────────────────────────────────────┘");
+                        Console.Write("\n\t\tDelete (y/n)? ");
+                        if (UserInputYN())
+                        {
+                            account.DeleteAccountFile();
+                            Console.WriteLine("\n\t\tAccount Deleted... ");
+                        }
+                        Console.Write("\n\t\tDelete another account (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
+                    }
+                    catch (System.IO.FileNotFoundException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.WriteLine("Error account not found");
+                        Console.Write("\n\t\tRetry (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
+                    }
+                } while (!exitPage);
             }
 
             void DisplayPageHeader(string text, Boolean spacer)
