@@ -55,10 +55,7 @@ namespace dotNetAssignment1Attempt
                         //Ask the user if they want to exit (y/n) if yes set exit program to true
                         Console.SetCursorPosition(mainErrCursor.y, mainErrCursor.x);
                         Console.Write("Are you sure you want to exit (y/n)? ");
-                        if (UserInputYN())
-                        {
-                            exitProgram = true;
-                        }
+                        exitProgram = UserInputYN();
                         break;
                 }
             } while (!exitProgram);
@@ -312,6 +309,13 @@ namespace dotNetAssignment1Attempt
                         Console.ReadKey();
                         continue;
                     }
+                    catch (System.OverflowException)
+                    {
+                        Console.SetCursorPosition(acctNumErrCursor.y, acctNumErrCursor.x);
+                        Console.Write("Error invalid account number ");
+                        Console.ReadKey();
+                        continue;
+                    }
 
                     try
                     {
@@ -373,7 +377,14 @@ namespace dotNetAssignment1Attempt
                         Console.ReadKey();
                         continue;
                     }
-                    
+                    catch (System.OverflowException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.Write("Error invalid account number ");
+                        Console.ReadKey();
+                        continue;
+                    }
+
                     try
                     {
                         BankAccount account = LoadBankAccount(accountNum);
@@ -439,6 +450,13 @@ namespace dotNetAssignment1Attempt
                         accountNum = Convert.ToInt32(Console.ReadLine());
                     }
                     catch (System.FormatException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.Write("Error invalid account number ");
+                        Console.ReadKey();
+                        continue;
+                    }
+                    catch (System.OverflowException)
                     {
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.Write("Error invalid account number ");
@@ -528,6 +546,13 @@ namespace dotNetAssignment1Attempt
                         Console.ReadKey();
                         continue;
                     }
+                    catch (System.OverflowException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.Write("Error invalid account number ");
+                        Console.ReadKey();
+                        continue;
+                    }
 
                     try
                     {
@@ -588,6 +613,17 @@ namespace dotNetAssignment1Attempt
                         acctNumber = Convert.ToInt32(Console.ReadLine());
                     }
                     catch (System.FormatException)
+                    {
+                        Console.SetCursorPosition(errCursor.y, errCursor.x);
+                        Console.WriteLine("Error invalid account number ");
+                        Console.Write("\n\t\tRetry (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
+                        continue;
+                    }
+                    catch (System.OverflowException)
                     {
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.WriteLine("Error invalid account number ");
@@ -696,20 +732,6 @@ namespace dotNetAssignment1Attempt
                 Console.WriteLine("\t\t│\t\t\t\t\t │");
             }
 
-            string GetAccountNum()
-            {
-                Console.WriteLine("\t\t│            Enter the details           │");
-                Console.WriteLine("\t\t│\t\t\t\t\t │");
-                Console.Write("\t\t│    Account Number: ");
-                CursorCoordinates acctNumCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
-                Console.WriteLine("\t\t\t │");
-                Console.WriteLine("\t\t└────────────────────────────────────────┘");
-                
-                Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                string acctNum = Console.ReadLine();
-                return acctNum;
-            }
-
             Boolean UserInputYN()
             {
                 Boolean correctInput = false;
@@ -731,13 +753,12 @@ namespace dotNetAssignment1Attempt
                     }
                     else if (userInputChar != 'y' || userInputChar != 'n')
                     {
-                        Console.Write("Error invalid key, please enter y or n ");
+                        Console.Write("\n\t\tError invalid key, please enter y or n: ");
                         correctInput = false;
                     }
                 } while (!correctInput);
                 return userInputBool;
             }
-
 
             // Check the user inputted username and password against the login file, return true if user enters valid credentials
             Boolean verifyLogin(string userName, string password)
@@ -761,7 +782,6 @@ namespace dotNetAssignment1Attempt
                 }
                 return false;
             }
-
 
             int DetermineLatesteAccountNumber() {
                 int acctNumCount = 100001;
@@ -806,7 +826,6 @@ namespace dotNetAssignment1Attempt
                         case 6: balance = float.Parse(splitText[1]); break;
                     }
                 }
-
                 BankAccount loadedAccount = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
                 return loadedAccount;
             }
