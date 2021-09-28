@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Mail;
+using System.Net;
 
 namespace dotNetAssignment1Attempt
 {
@@ -265,8 +267,10 @@ namespace dotNetAssignment1Attempt
                     
                     if (validAccountCreated)
                     {
-                        BankAccount account = new BankAccount(currentAcctNum, firstName, lastName, address, phone, email, 0);
+                        string[] tempArry = new string[5];
+                        BankAccount account = new BankAccount(currentAcctNum, firstName, lastName, address, phone, email, 0, tempArry);
                         account.CreateAccountFile();
+                        account.SendEmail("New Account Created");
                     }
                 
                 } while (!validInput);
@@ -323,7 +327,7 @@ namespace dotNetAssignment1Attempt
 
                         DisplayPageHeader("ACCOUNT DETAILS", true);
 
-                        account.Display();
+                        account.Display(false);
                         Console.WriteLine("\t\t└────────────────────────────────────────┘");
 
                         Console.Write("\n\t\tSearch another account (y/n)? ");
@@ -562,12 +566,13 @@ namespace dotNetAssignment1Attempt
                         DisplayPageHeaderSubtitle("STATEMENT", "Account Statement");
                         Console.WriteLine("\t\t│\t\t\t\t\t │");
 
-                        account.Display();
+                        account.Display(true);
                         Console.WriteLine("\t\t└────────────────────────────────────────┘");
                         Console.Write("\n\t\tEmail statement (y/n)? ");
                         if (UserInputYN())
                         {
-                            //Put in code to email statement
+                            account.SendEmail("Account Statement");
+
                             Console.WriteLine("\n\t\tEmail Sent Successfully!...");
                         }
                         Console.Write("\n\t\tSearch for another account (y/n)? ");
@@ -641,7 +646,7 @@ namespace dotNetAssignment1Attempt
 
                         DisplayPageHeader("ACCOUNT DETAILS", true);
 
-                        account.Display();
+                        account.Display(false);
                         Console.WriteLine("\t\t└────────────────────────────────────────┘");
                         Console.Write("\n\t\tDelete (y/n)? ");
                         if (UserInputYN())
@@ -809,8 +814,8 @@ namespace dotNetAssignment1Attempt
                 int phone = 0;
                 string email = "";
                 float balance = 0;
+                string[] latestTransactions = new string[5];
                 string[] fileText = File.ReadAllLines(acctNumber + ".txt");
-                //string[] keyWords = { "First Name|", "Last Name|", "Address|", "Phone|", "Email|", "Balance|" };
 
                 for (int i = 0; i < fileText.Length; i++)
                 {
@@ -818,15 +823,20 @@ namespace dotNetAssignment1Attempt
 
                     switch (i)
                     {
-                        case 0: fName = splitText[1]; break;//fileText[i].Replace(keyWords[0], ""); break;
-                        case 1: lName = splitText[1]; break;//fileText[i].Replace(keyWords[1], ""); break;
-                        case 2: address = splitText[1]; break;//fileText[i].Replace(keyWords[2], ""); break;
+                        case 0: fName = splitText[1]; break;
+                        case 1: lName = splitText[1]; break;
+                        case 2: address = splitText[1]; break;
                         case 3: phone = Convert.ToInt32(splitText[1]); break;
-                        case 4: email = splitText[1]; break;//fileText[i].Replace(keyWords[4], ""); break;
+                        case 4: email = splitText[1]; break;
                         case 6: balance = float.Parse(splitText[1]); break;
                     }
                 }
-                BankAccount loadedAccount = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance);
+
+                for (int i = 0; i < latestTransactions.Length; i++)
+                {
+                    latestTransactions[i] = fileText[(fileText.Length - 5 + i)];
+                }
+                BankAccount loadedAccount = new BankAccount(Convert.ToInt32(acctNumber), fName, lName, address, phone, email, balance, latestTransactions);
                 return loadedAccount;
             }
         }
@@ -853,8 +863,9 @@ namespace dotNetAssignment1Attempt
         private string firstName, lastName, address, email;
         private int accountNum, phone;
         private float balance;
+        private string[] latestTransactions;
 
-        public BankAccount(int accountNum, string firstName, string lastName, string address, int phone, string email, float balance)
+        public BankAccount(int accountNum, string firstName, string lastName, string address, int phone, string email, float balance, string[] latestTransactions)
         {
             this.accountNum = accountNum;
             this.firstName = firstName;
@@ -863,22 +874,37 @@ namespace dotNetAssignment1Attempt
             this.phone = phone;
             this.email = email;
             this.balance = balance;
+            this.latestTransactions = latestTransactions;
         }
-        public void Display()
+        public void Display(bool showTransactionDetails)
         {
             Console.WriteLine("\t\t│    Account number: {0}\t\t │", this.accountNum);
             Console.WriteLine("\t\t│    Account Balance: ${0}\t\t │", this.balance);
             Console.WriteLine("\t\t│    First Name: {0}\t\t\t │", this.firstName);
             Console.WriteLine("\t\t│    Last Name: {0}\t\t\t │", this.lastName);
             Console.Write("\t\t│    Address: {0}", this.address);
-            int length = 27 - this.address.Length;
+            AddAdditionalSpaces(27, this.address.Length);
+
+            Console.WriteLine("\t\t│    Phone: {0}\t\t\t │", this.phone);
+            Console.WriteLine("\t\t│    Email: {0}\t\t │", this.email);
+            if (showTransactionDetails)
+            {
+                for (int i = 0; i < latestTransactions.Length; i++)
+                {
+                    Console.Write("\t\t│    {0}", this.latestTransactions[i]);
+                    AddAdditionalSpaces(36, this.latestTransactions[i].Length);
+                }
+            }
+        }
+
+        private void AddAdditionalSpaces(int lineLength, int stringLength)
+        {
+            int length = lineLength - stringLength;
             for (int i = 0; i < length; i++)
             {
                 Console.Write(" ");
             }
-            Console.WriteLine("│");
-            Console.WriteLine("\t\t│    Phone: {0}\t\t\t │", this.phone);
-            Console.WriteLine("\t\t│    Email: {0}\t\t │", this.email);
+         Console.WriteLine("│");
         }
 
         public float GetBalance()
@@ -908,26 +934,28 @@ namespace dotNetAssignment1Attempt
             string name = accountNum + ".txt";
             string time = Convert.ToString(File.GetLastAccessTime(name));
             time = time.Remove(10, (time.Length-10));
-            string[] fileText = File.ReadAllLines(name);
-            if (fileText.Length < 12)
-            {
-                File.AppendAllText(name, time + "|" + type + "|" + amount + "|" + this.balance);
-            }
-            else
-            {
-                //Loop over transaction lines and replace them, replace last line
-                fileText[7] = fileText[8];
-                fileText[8] = fileText[9];
-                fileText[9] = fileText[10];
-                fileText[10] = fileText[11];
-                fileText[11] = time + "|" + type + "|" + amount + "|" + this.balance;
-                File.WriteAllLines(name, fileText);
-            }
+            File.AppendAllText(name, time + "|" + type + "|" + amount + "|" + this.balance);
         }
 
-        public void EmailAccountStatement()
+        public void SendEmail(string subject)
         {
+            string[] fileText = File.ReadAllLines(this.accountNum + ".txt");
 
+            string joinedFileText = String.Join("\n", fileText);
+
+            MailMessage message = new MailMessage();
+            SmtpClient smtp = new SmtpClient();
+            message.From = new MailAddress("dnetassignment@gmail.com");
+            message.To.Add(new MailAddress(this.email));
+            message.Subject = subject;
+            message.Body = joinedFileText;
+            smtp.Port = 587;
+            smtp.Host = "smtp.gmail.com";
+            smtp.EnableSsl = true;
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = new NetworkCredential("dnetassignment@gmail.com", "Eclipse123");
+            smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+            smtp.Send(message);
         }
 
         public void DeleteAccountFile()
