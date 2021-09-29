@@ -574,7 +574,6 @@ namespace dotNetAssignment1Attempt
 
                         Console.WriteLine("\n\n\t\tAccount found! The statement is displayed below...");
                         DisplayPageHeaderSubtitle("STATEMENT", "Account Statement");
-                        Console.WriteLine("\t\t│\t\t\t\t\t │");
 
                         //Display account details with 5 latest transactions
                         account.Display(true);
@@ -647,6 +646,9 @@ namespace dotNetAssignment1Attempt
                     {
                         BankAccount account = LoadBankAccount(accountNum);
 
+                        Console.Write("\n\n\t\tAccount found! Details displayed below...");
+
+                        //Display page header with line spacer
                         DisplayPageHeader("ACCOUNT DETAILS", true);
 
                         //Display account details without latest 5 transactions

@@ -1,7 +1,0 @@
-First Name|Jon
-Last Name|Duff
-Address|asudfgas
-Phone|12761
-Email|jd@gmail.com
-AccountNo|100003
-Balance|0
