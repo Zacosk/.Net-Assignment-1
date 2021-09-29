@@ -307,7 +307,7 @@ namespace dotNetAssignment1Attempt
             void SearchAccountPage()
             {
                 Boolean exitPage = false;
-                int acctNumber = 0;
+                int accountNum = 0;
                 do
                 {
                     //Display search account page
@@ -323,29 +323,22 @@ namespace dotNetAssignment1Attempt
                     CursorCoordinates acctNumErrCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    //Get account number and display appropriate 
-                    try
+                    
+                    //Get account number, if account number is 0 ask if the user wants to retry, if yes: restart loop, else exit method
+                    accountNum = GetAccountNumberInput(acctNumErrCursor.x, acctNumErrCursor.y);
+                    if (accountNum == 0)
                     {
-                        acctNumber = Convert.ToInt32(Console.ReadLine());
-                    }
-                    catch (System.FormatException)
-                    {
-                        Console.SetCursorPosition(acctNumErrCursor.y, acctNumErrCursor.x);
-                        Console.Write("Error invalid account number ");
-                        Console.ReadKey();
-                        continue;
-                    }
-                    catch (System.OverflowException)
-                    {
-                        Console.SetCursorPosition(acctNumErrCursor.y, acctNumErrCursor.x);
-                        Console.Write("Error invalid account number ");
-                        Console.ReadKey();
+                        Console.Write("\n\t\tRetry (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
                         continue;
                     }
 
                     try
                     {
-                        BankAccount account = LoadBankAccount(acctNumber);
+                        BankAccount account = LoadBankAccount(accountNum);
 
                         DisplayPageHeader("ACCOUNT DETAILS", true);
 
@@ -377,6 +370,7 @@ namespace dotNetAssignment1Attempt
                 int accountNum = 0;
                 do
                 {
+                    //Display deposit page
                     Console.Clear();
                     DisplayPageHeaderSubtitle("DEPOSIT", "Enter the Details");
 
@@ -393,25 +387,19 @@ namespace dotNetAssignment1Attempt
                     CursorCoordinates errCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    try
+                    //Get user inputted account number
+                    accountNum = GetAccountNumberInput(errCursor.x, errCursor.y);
+                    if (accountNum == 0)
                     {
-                        accountNum = Convert.ToInt32(Console.ReadLine());
-                    }
-                    catch (System.FormatException)
-                    {
-                        Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.Write("Error invalid account number ");
-                        Console.ReadKey();
-                        continue;
-                    }
-                    catch (System.OverflowException)
-                    {
-                        Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.Write("Error invalid account number ");
-                        Console.ReadKey();
+                        Console.Write("\n\t\tRetry (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
                         continue;
                     }
 
+                    //Load bank account, display appropriate messages
                     try
                     {
                         BankAccount account = LoadBankAccount(accountNum);
@@ -419,11 +407,15 @@ namespace dotNetAssignment1Attempt
                         Console.WriteLine("Account found! Enter the amount...");
 
                         Console.SetCursorPosition(amountCursor.y, amountCursor.x);
+                        //Get amount to be deposited
                         float amount = float.Parse(Console.ReadLine());
 
+                        //Set balance of account
                         account.SetBalance(account.GetBalance() + amount);
 
+                        //Write newly updated account to file
                         account.WriteAccountToFile();
+                        //append new deposit details to file
                         account.AppendTransactionDetails("Deposit", Convert.ToInt32(amount));
 
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
@@ -456,6 +448,7 @@ namespace dotNetAssignment1Attempt
                 int accountNum = 0;
                 do
                 {
+                    //Display withdraw page
                     Console.Clear();
                     DisplayPageHeaderSubtitle("WITHDRAW", "Enter the Details");
 
@@ -473,27 +466,21 @@ namespace dotNetAssignment1Attempt
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
 
-                    try
+                    //Get user inputted account number, display appropriate retry messages
+                    accountNum = GetAccountNumberInput(errCursor.x, errCursor.y);
+                    if (accountNum == 0)
                     {
-                        accountNum = Convert.ToInt32(Console.ReadLine());
-                    }
-                    catch (System.FormatException)
-                    {
-                        Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.Write("Error invalid account number ");
-                        Console.ReadKey();
-                        continue;
-                    }
-                    catch (System.OverflowException)
-                    {
-                        Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.Write("Error invalid account number ");
-                        Console.ReadKey();
+                        Console.Write("\n\t\tRetry (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
                         continue;
                     }
 
                     try
                     {
+                        //Load BankAccount from file, display appropriate message
                         BankAccount account = LoadBankAccount(accountNum);
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.WriteLine("Account found! Enter the amount...");
@@ -501,8 +488,10 @@ namespace dotNetAssignment1Attempt
                         do
                         {
                             Console.SetCursorPosition(amountCursor.y, amountCursor.x);
+                            //Get amount to be withdrawn from user
                             float amount = float.Parse(Console.ReadLine());
 
+                            //If the withdraw amount is <= account balance withdraw from account and update file
                             if (amount <= account.GetBalance())
                             {
                                 account.SetBalance(account.GetBalance() - amount);
@@ -519,6 +508,7 @@ namespace dotNetAssignment1Attempt
                                     exitPage = true;
                                 }
                             }
+                            //If withdraw amount is greater than balance display appropriate error message, ask to retry
                             else
                             {
                                 Console.SetCursorPosition(errCursor.y, errCursor.x);
@@ -549,9 +539,10 @@ namespace dotNetAssignment1Attempt
             void AccountStatementPage()
             {
                 Boolean exitPage = false;
-                int acctNumber = 0;
+                int accountNum = 0;
                 do
                 {
+                    //Display account statement page
                     Console.Clear();
                     DisplayPageHeaderSubtitle("STATEMENT", "Enter the Details");
 
@@ -564,35 +555,32 @@ namespace dotNetAssignment1Attempt
                     CursorCoordinates errCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
-                    try
+                    //Get user inputted account details, if error ask to retry
+                    accountNum = GetAccountNumberInput(errCursor.x, errCursor.y);
+                    if (accountNum == 0)
                     {
-                        acctNumber = Convert.ToInt32(Console.ReadLine());
-                    }
-                    catch (System.FormatException)
-                    {
-                        Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.Write("Error invalid account number ");
-                        Console.ReadKey();
-                        continue;
-                    }
-                    catch (System.OverflowException)
-                    {
-                        Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.Write("Error invalid account number ");
-                        Console.ReadKey();
+                        Console.Write("\n\t\tRetry (y/n)? ");
+                        if (!UserInputYN())
+                        {
+                            exitPage = true;
+                        }
                         continue;
                     }
 
+                    //Load BankAccount from file
                     try
                     {
-                        BankAccount account = LoadBankAccount(acctNumber);
+                        BankAccount account = LoadBankAccount(accountNum);
 
                         Console.WriteLine("\n\n\t\tAccount found! The statement is displayed below...");
                         DisplayPageHeaderSubtitle("STATEMENT", "Account Statement");
                         Console.WriteLine("\t\t│\t\t\t\t\t │");
 
+                        //Display account details with 5 latest transactions
                         account.Display(true);
                         Console.WriteLine("\t\t└────────────────────────────────────────┘");
+
+                        //User input to send email, if yes send account details via email
                         Console.Write("\n\t\tEmail statement (y/n)? ");
                         if (UserInputYN())
                         {
@@ -606,6 +594,8 @@ namespace dotNetAssignment1Attempt
                             exitPage = true;
                         }
                     }
+
+                    //If account file isnt found display appropriate error message and ask to retry
                     catch (System.IO.FileNotFoundException)
                     {
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
@@ -622,10 +612,11 @@ namespace dotNetAssignment1Attempt
 
             //Display account deletion page and take user inputs to delete an existing account
             void DeleteAccountPage() {
-                int acctNumber = 0;
+                int accountNum = 0;
                 Boolean exitPage = false;
                 do
                 {
+                    //Display account deletion page
                     Console.Clear();
                     DisplayPageHeader("DELETE AN ACCOUNT", true);
                     Console.WriteLine("\t\t│            Enter the details           │");
@@ -639,25 +630,10 @@ namespace dotNetAssignment1Attempt
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
 
-                    try
+                    //Get user input for account number
+                    accountNum = GetAccountNumberInput(errCursor.x, errCursor.y);
+                    if (accountNum == 0)
                     {
-                        acctNumber = Convert.ToInt32(Console.ReadLine());
-                    }
-                    catch (System.FormatException)
-                    {
-                        Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.WriteLine("Error invalid account number ");
-                        Console.Write("\n\t\tRetry (y/n)? ");
-                        if (!UserInputYN())
-                        {
-                            exitPage = true;
-                        }
-                        continue;
-                    }
-                    catch (System.OverflowException)
-                    {
-                        Console.SetCursorPosition(errCursor.y, errCursor.x);
-                        Console.WriteLine("Error invalid account number ");
                         Console.Write("\n\t\tRetry (y/n)? ");
                         if (!UserInputYN())
                         {
@@ -666,14 +642,18 @@ namespace dotNetAssignment1Attempt
                         continue;
                     }
 
+                    //Load BankAccount from file
                     try
                     {
-                        BankAccount account = LoadBankAccount(acctNumber);
+                        BankAccount account = LoadBankAccount(accountNum);
 
                         DisplayPageHeader("ACCOUNT DETAILS", true);
 
+                        //Display account details without latest 5 transactions
                         account.Display(false);
                         Console.WriteLine("\t\t└────────────────────────────────────────┘");
+
+                        //Ask the user if they want to delete the account, if yes delete account file
                         Console.Write("\n\t\tDelete (y/n)? ");
                         if (UserInputYN())
                         {
@@ -686,6 +666,7 @@ namespace dotNetAssignment1Attempt
                             exitPage = true;
                         }
                     }
+                    //If file not found display appropriate error message and ask to retry
                     catch (System.IO.FileNotFoundException)
                     {
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
@@ -834,6 +815,27 @@ namespace dotNetAssignment1Attempt
                     
                 } while (!reachedMax);
                 return acctNumCount;
+            }
+
+            //Get the user input, convert it into an integer and return it, if an error occurs display error message and return 0
+            int GetAccountNumberInput(int errorX, int errorY)
+            {
+                try
+                {
+                    int accountNum = Convert.ToInt32(Console.ReadLine());
+                    return accountNum;
+                }
+                catch (System.FormatException)
+                {
+                    Console.SetCursorPosition(errorY, errorX);
+                    Console.Write("Error invalid account number ");
+                }
+                catch (System.OverflowException)
+                {
+                    Console.SetCursorPosition(errorY, errorX);
+                    Console.Write("Error invalid account number ");
+                }
+                return 0;
             }
 
             //Creates a new BankAccount from account file, takes account number integer, returns BankAccount
