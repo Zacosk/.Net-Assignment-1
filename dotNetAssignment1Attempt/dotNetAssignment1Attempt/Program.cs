@@ -24,6 +24,7 @@ namespace dotNetAssignment1Attempt
 
             CursorCoordinates mainErrCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
+            //Takes user input and runs the specific method for their input
             do {
                 int mainUserInput = MainMenuPage();
 
@@ -34,7 +35,7 @@ namespace dotNetAssignment1Attempt
                         break;
 
                     case 2: //Search for an account
-                            SearchAccountPage();
+                        SearchAccountPage();
                         break;
 
                     case 3: //Deposit
@@ -68,7 +69,6 @@ namespace dotNetAssignment1Attempt
                 Boolean successfulLogin = false;
                 do
                 {
-                    //Login page
                     Console.Clear();
                     DisplayPageHeaderSubtitle("WELCOME TO SIMPLE BANKING SYSTEM", "Login to Start");
 
@@ -92,17 +92,23 @@ namespace dotNetAssignment1Attempt
                     string userInputName = Console.ReadLine();
 
                     Console.SetCursorPosition(loginPassCursor.y, loginPassCursor.x);
-                    string userInputPassword = "";// = Console.ReadLine();
+                    string userInputPassword = "";
                     string hiddenPassword = "";
 
                     bool completedPassword = false;
+                    //Detects user inputted chars and adds them to password string, displays hidden password string consisting of '*'
+                    //which is updated to be the same length as the password string
                     while (!completedPassword)
                     {
                         var key = System.Console.ReadKey(true);
+                        //If the key is enter stop accepting new chars
                         if (key.Key == ConsoleKey.Enter)
                         {
                             break;
-                        } else if (key.Key == ConsoleKey.Backspace)
+                        } 
+                        //If the key is backspace, remove a char from password and hidden password, redisplay password line on console
+                        //to reflect this edit to the string
+                        else if (key.Key == ConsoleKey.Backspace)
                         {
                             Console.SetCursorPosition(loginPassLineCursor.y, loginPassLineCursor.x);
                             Console.Write("\t\t│    Password:                           │");
@@ -110,7 +116,9 @@ namespace dotNetAssignment1Attempt
                             userInputPassword = userInputPassword.Remove(userInputPassword.Length - 1);
                             Console.SetCursorPosition(loginPassCursor.y, loginPassCursor.x);
                             Console.Write(hiddenPassword);
-                        } else
+                        } 
+                        //Add char to password string, add '*' to hidden password
+                        else
                         {
                             userInputPassword += key.KeyChar;
                             hiddenPassword += "*";
@@ -121,6 +129,7 @@ namespace dotNetAssignment1Attempt
 
                     Console.SetCursorPosition(errCursor.y, errCursor.x);
                     
+                    //Verify login details, else try again
                     if (verifyLogin(userInputName, userInputPassword))
                     {
                         Console.Write("Valid credentials... press enter");
@@ -138,7 +147,7 @@ namespace dotNetAssignment1Attempt
             //Display main menu and detect user input
             int MainMenuPage()
             {
-                //string mainUserInput;
+                //Display main menu
                 Console.Clear();
                 DisplayPageHeaderSubtitle("WELCOME TO SIMPLE BANKING SYSTEM", "Main Menu");
 
@@ -160,6 +169,7 @@ namespace dotNetAssignment1Attempt
 
                 mainErrCursor.SetCoordinates(Console.CursorTop, Console.CursorLeft);
                 
+                //set cursor position for user input, get user input and return, else return 0
                 Console.SetCursorPosition(userInputCursor.y, userInputCursor.x);
                 try
                 {
@@ -175,6 +185,7 @@ namespace dotNetAssignment1Attempt
                 return 0;
             }
 
+            //Display account creation page and take user inputs to create new account
             void CreateAccountPage()
             {
                 int notificationCursor1X, notificationCursor1Y, notificationCursor2X, notificationCursor2Y;
@@ -185,6 +196,7 @@ namespace dotNetAssignment1Attempt
                     string firstName, lastName, address, email;
                     bool validAccountCreated = false;
                     
+                    //Display account creation page and setup cursor positions
                     Console.Clear();
                     DisplayPageHeaderSubtitle("CREATE NEW ACCOUNT", "Enter Details");
 
@@ -220,6 +232,7 @@ namespace dotNetAssignment1Attempt
                     notificationCursor2X = Console.CursorTop;
                     notificationCursor2Y = Console.CursorLeft;
 
+                    //Get user inputs for account details
                     Console.SetCursorPosition(fNameCursor.y, fNameCursor.x);
                     firstName = Console.ReadLine();
 
@@ -230,6 +243,7 @@ namespace dotNetAssignment1Attempt
                     address = Console.ReadLine();
 
                     Console.SetCursorPosition(phoneCursor.y, phoneCursor.x);
+                    //Display error messages for if the phone number is not an integer and if the phone number is greater than 10 digits
                     try
                     {
                         phone = Convert.ToInt32(Console.ReadLine());
@@ -251,8 +265,10 @@ namespace dotNetAssignment1Attempt
 
                     Console.SetCursorPosition(emailCursor.y, emailCursor.x);
                     email = Console.ReadLine();
+                    //Checks whether the email contains @gmail.com, @outlook.com or @uts.edu.au, displays appropriate error messages if it does not
                     if (email.Contains("@") && email.Contains("gmail.com") || email.Contains("outlook.com") || email.Contains("uts.edu.au"))
                     {
+                        //Asks for final confirmation of account details
                         Console.SetCursorPosition(errCursor.y, errCursor.x);
                         Console.Write("Is this information correct (y/n)? ");
                         validInput = UserInputYN();
@@ -265,6 +281,7 @@ namespace dotNetAssignment1Attempt
                         Console.ReadKey();
                     }
                     
+                    //If all account details are valid, create a BankAccount and call its CreateAccountFile method to create a new file
                     if (validAccountCreated)
                     {
                         string[] tempArry = new string[5];
@@ -275,21 +292,25 @@ namespace dotNetAssignment1Attempt
                 
                 } while (!validInput);
                 
+                //Display appropriate account creation notifications
                 Console.SetCursorPosition(notificationCursor1Y, notificationCursor1X);
                 Console.WriteLine("Account Created! details will be provided via email.");
                 Console.SetCursorPosition(notificationCursor2Y, notificationCursor2X);
                 Console.Write("Account number is: {0}", currentAcctNum);
+                //Increase currentAcctNum to ensure next account does not have the same number
                 currentAcctNum++;
                 Console.ReadKey();
                 Console.WriteLine();
             }
 
+            //Display search account page and take user inputs to search for an existing account
             void SearchAccountPage()
             {
                 Boolean exitPage = false;
                 int acctNumber = 0;
                 do
                 {
+                    //Display search account page
                     Console.Clear();
                     DisplayPageHeaderSubtitle("SEARCH AN ACCOUNT", "Enter the Details");
 
@@ -302,6 +323,7 @@ namespace dotNetAssignment1Attempt
                     CursorCoordinates acctNumErrCursor = new CursorCoordinates(Console.CursorTop, Console.CursorLeft);
 
                     Console.SetCursorPosition(acctNumCursor.y, acctNumCursor.x);
+                    //Get account number and display appropriate 
                     try
                     {
                         acctNumber = Convert.ToInt32(Console.ReadLine());
@@ -348,6 +370,7 @@ namespace dotNetAssignment1Attempt
                 } while (!exitPage);
             }
 
+            //Display deposit page and take user inputs to deposit into a specified existing account
             void DepositPage()
             {
                 Boolean exitPage = false;
@@ -425,6 +448,7 @@ namespace dotNetAssignment1Attempt
                 } while (!exitPage);
             }
             
+            //Display withdraw page and take user inputs to withdraw from a specified existing account
             void WithdrawPage()
             {
                 Boolean exitPage = false;
@@ -521,6 +545,7 @@ namespace dotNetAssignment1Attempt
                 } while (!exitPage);
             }
 
+            //Display account statement page and take user inputs to display statement for a specified existing account
             void AccountStatementPage()
             {
                 Boolean exitPage = false;
@@ -595,6 +620,7 @@ namespace dotNetAssignment1Attempt
                 } while (!exitPage); 
             }
 
+            //Display account deletion page and take user inputs to delete an existing account
             void DeleteAccountPage() {
                 int acctNumber = 0;
                 Boolean exitPage = false;
@@ -673,6 +699,7 @@ namespace dotNetAssignment1Attempt
                 } while (!exitPage);
             }
 
+            //Display the header of a page, takes string for header text and boolean for whether an extra blank line is added after the heading
             void DisplayPageHeader(string text, Boolean spacer)
             {
                 int num = text.Length;
@@ -707,6 +734,7 @@ namespace dotNetAssignment1Attempt
                 }
             }
 
+            //Display the header and subtitle of a page, takes strings for text and subtitle
             void DisplayPageHeaderSubtitle(string title, string subTitle)
             {
                 int num = subTitle.Length;
@@ -737,6 +765,7 @@ namespace dotNetAssignment1Attempt
                 Console.WriteLine("\t\t│\t\t\t\t\t │");
             }
 
+            //Takes user input char, returns true if 'y' or false if 'n', displays error message if char is not 'y' or 'n'
             Boolean UserInputYN()
             {
                 Boolean correctInput = false;
@@ -765,7 +794,7 @@ namespace dotNetAssignment1Attempt
                 return userInputBool;
             }
 
-            // Check the user inputted username and password against the login file, return true if user enters valid credentials
+            //Check the user inputted username and password against the login file, return true if user enters valid credentials
             Boolean verifyLogin(string userName, string password)
             {
                 //Create an array of strings from lines of the text file
@@ -788,6 +817,7 @@ namespace dotNetAssignment1Attempt
                 return false;
             }
 
+            //Determines highest existing account number and returns that number 
             int DetermineLatesteAccountNumber() {
                 int acctNumCount = 100001;
                 Boolean reachedMax = false;
@@ -806,6 +836,7 @@ namespace dotNetAssignment1Attempt
                 return acctNumCount;
             }
 
+            //Creates a new BankAccount from account file, takes account number integer, returns BankAccount
             BankAccount LoadBankAccount(int acctNumber)
             {
                 string fName = "";
@@ -842,6 +873,7 @@ namespace dotNetAssignment1Attempt
         }
     }
 
+    //Struct containing console cursor coordinates
     public struct CursorCoordinates
     {
         public int x, y;
@@ -858,12 +890,13 @@ namespace dotNetAssignment1Attempt
         }
     }
 
+    //BankAccount class containing bank account information
     class BankAccount
     {
         private string firstName, lastName, address, email;
         private int accountNum, phone;
         private float balance;
-        private string[] latestTransactions;
+        private string[] latestTransactions; //Used for displaying last 5 transactions to account statement page
 
         public BankAccount(int accountNum, string firstName, string lastName, string address, int phone, string email, float balance, string[] latestTransactions)
         {
@@ -876,6 +909,8 @@ namespace dotNetAssignment1Attempt
             this.balance = balance;
             this.latestTransactions = latestTransactions;
         }
+
+        //Displays account information, takes boolean to show latest transactions
         public void Display(bool showTransactionDetails)
         {
             Console.WriteLine("\t\t│    Account number: {0}\t\t │", this.accountNum);
@@ -897,6 +932,7 @@ namespace dotNetAssignment1Attempt
             }
         }
 
+        //Calculates the number of spaces required to complete the line without the edge of the screen going too far
         private void AddAdditionalSpaces(int lineLength, int stringLength)
         {
             int length = lineLength - stringLength;
@@ -917,11 +953,13 @@ namespace dotNetAssignment1Attempt
             this.balance = bal;
         }
 
+        //Creates a new file with account information
         public void CreateAccountFile()
         {
             File.WriteAllText(accountNum + ".txt", "First Name|" + this.firstName + "\nLast Name|" + this.lastName + "\nAddress|" + this.address + "\nPhone|" + this.phone + "\nEmail|" + this.email + "\nAccountNo|" + this.accountNum + "\nBalance|" + this.balance);
         }
 
+        //Opens existing account file and updates balance
         public void WriteAccountToFile()
         {
             string[] fileText = File.ReadAllLines(this.accountNum + ".txt");
@@ -929,6 +967,7 @@ namespace dotNetAssignment1Attempt
             File.WriteAllLines(this.accountNum + ".txt", fileText);
         }
 
+        //Opens existing account file and appends transaction details to the end
         public void AppendTransactionDetails(string type, int amount)
         {
             string name = accountNum + ".txt";
@@ -937,6 +976,7 @@ namespace dotNetAssignment1Attempt
             File.AppendAllText(name, time + "|" + type + "|" + amount + "|" + this.balance);
         }
 
+        //Sends email to BankAccount email
         public void SendEmail(string subject)
         {
             string[] fileText = File.ReadAllLines(this.accountNum + ".txt");
@@ -958,6 +998,7 @@ namespace dotNetAssignment1Attempt
             smtp.Send(message);
         }
 
+        //Deletes BankAccount file
         public void DeleteAccountFile()
         {
             File.Delete(this.accountNum + ".txt");
