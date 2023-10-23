@@ -584,8 +584,6 @@ namespace dotNetAssignment1Attempt
                         if (UserInputYN())
                         {
                             account.SendEmail("Account Statement");
-
-                            Console.WriteLine("\n\t\tEmail Sent Successfully!...");
                         }
                         Console.Write("\n\t\tSearch for another account (y/n)? ");
                         if (!UserInputYN())
@@ -983,23 +981,36 @@ namespace dotNetAssignment1Attempt
         //Sends email to BankAccount email
         public void SendEmail(string subject)
         {
-            string[] fileText = File.ReadAllLines(this.accountNum + ".txt");
+            try
+            {
+                string[] fileText = File.ReadAllLines(this.accountNum + ".txt");
 
-            string joinedFileText = String.Join("\n", fileText);
+                string joinedFileText = String.Join("\n", fileText);
 
-            MailMessage message = new MailMessage();
-            SmtpClient smtp = new SmtpClient();
-            message.From = new MailAddress("dnetassignment@gmail.com");
-            message.To.Add(new MailAddress(this.email));
-            message.Subject = subject;
-            message.Body = joinedFileText;
-            smtp.Port = 587;
-            smtp.Host = "smtp.gmail.com";
-            smtp.EnableSsl = true;
-            smtp.UseDefaultCredentials = false;
-            smtp.Credentials = new NetworkCredential("dnetassignment@gmail.com", "Eclipse123");
-            smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtp.Send(message);
+                MailMessage message = new MailMessage();
+                SmtpClient smtp = new SmtpClient();
+                message.From = new MailAddress("dnetassignment@gmail.com");
+                message.To.Add(new MailAddress(this.email));
+                message.Subject = subject;
+                message.Body = joinedFileText;
+                smtp.Port = 587;
+                smtp.Host = "smtp.gmail.com";
+                smtp.EnableSsl = true;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential("dnetassignment@gmail.com", "Eclipse123");
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.Send(message);
+
+                Console.WriteLine("\n\t\tEmail Sent Successfully!...");
+            } catch (Exception e)
+            {
+                Console.Write("\n\t\tError: automated email account disconnected, unable to send email\n\t\tpress enter to continue");
+                Console.ReadLine();
+                Console.SetCursorPosition(0, Console.CursorTop-2);
+                Console.WriteLine(new string(' ', Console.WindowWidth) + new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, Console.CursorTop - 2);
+            }
+            
         }
 
         //Deletes BankAccount file
